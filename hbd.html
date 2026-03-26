@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krisha's Day!</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blush: #f9c6d0;
+    --rose: #e8748a;
+    --hot: #d6255f;
+    --soft: #fde8ed;
+    --cream: #fff5f7;
+    --mauve: #b85472;
+    --gold: #e8c07d;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: var(--soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    overflow: hidden;
+    cursor: default;
+  }
+
+  /* ── Floating petals ── */
+  .petal {
+    position: fixed;
+    border-radius: 50% 0 50% 0;
+    opacity: 0;
+    animation: fall linear infinite;
+    pointer-events: none;
+  }
+  @keyframes fall {
+    0%   { transform: translateY(-40px) rotate(0deg); opacity: 0.7; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* ── Card ── */
+  .card {
+    position: relative;
+    width: min(520px, 92vw);
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 60px 52px 52px;
+    text-align: center;
+    box-shadow: 0 0 0 1px #e8a0b040, 0 8px 40px #d6255f22, 0 32px 80px #b8547220;
+    overflow: visible;
+    animation: rise 1s cubic-bezier(.16,1,.3,1) both;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(40px) scale(.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .card::before, .card::after {
+    content: '';
+    position: absolute;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle at center, #f9c6d055 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .card::before { top: -30px; left: -30px; }
+  .card::after  { bottom: -30px; right: -30px; }
+
+  .ribbon {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 80px; height: 5px;
+    background: linear-gradient(90deg, var(--blush), var(--hot), var(--blush));
+    border-radius: 0 0 6px 6px;
+  }
+
+  /* ── Dots ── */
+  .dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 28px; animation: rise 1s .15s cubic-bezier(.16,1,.3,1) both; }
+  .dot  { width: 6px; height: 6px; border-radius: 50%; background: var(--rose); opacity: .5; }
+  .dot:nth-child(3) { background: var(--hot); opacity: .9; width: 8px; height: 8px; }
+
+  /* ── Balloons ── */
+  .balloons { display: flex; justify-content: center; gap: 18px; margin-bottom: 32px; animation: rise 1s .2s cubic-bezier(.16,1,.3,1) both; }
+  .balloon {
+    position: relative;
+    width: 38px; height: 48px;
+    border-radius: 50% 50% 50% 50% / 55% 55% 45% 45%;
+    animation: sway 3s ease-in-out infinite;
+    cursor: pointer;
+    transition: filter .2s;
+  }
+  .balloon:hover { filter: brightness(1.1) drop-shadow(0 4px 10px #e8748a88); }
+  .balloon:nth-child(1) { background: radial-gradient(circle at 35% 30%, #fde8ed, #e8748a); animation-delay: 0s; }
+  .balloon:nth-child(2) { background: radial-gradient(circle at 35% 30%, #ffd6e8, #d6255f); animation-delay: .4s; width:46px; height:58px; }
+  .balloon:nth-child(3) { background: radial-gradient(circle at 35% 30%, #fde8ed, #b85472); animation-delay: .2s; }
+  .balloon:nth-child(4) { background: radial-gradient(circle at 35% 30%, #ffeef4, #e8c07d); animation-delay: .6s; }
+  .balloon::after { content:''; position:absolute; bottom:-20px; left:50%; transform:translateX(-50%); width:1px; height:22px; background:#b8547280; }
+  .balloon::before { content:''; position:absolute; bottom:-1px; left:50%; transform:translateX(-50%); width:6px; height:5px; background:inherit; clip-path:polygon(50% 100%,0 0,100% 0); }
+  @keyframes sway { 0%,100% { transform:rotate(-4deg); } 50% { transform:rotate(4deg); } }
+
+  /* Balloon pop burst */
+  .pop-burst {
+    position: fixed;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .pop-burst span {
+    position: absolute;
+    font-size: 18px;
+    animation: burst .7s ease-out forwards;
+    transform-origin: center;
+  }
+  @keyframes burst {
+    0%   { opacity: 1; transform: translate(0,0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.4); }
+  }
+
+  /* ── Typography ── */
+  .sub { font-size: 13px; font-weight: 300; letter-spacing: .35em; text-transform: uppercase; color: var(--rose); margin-bottom: 10px; animation: rise 1s .3s cubic-bezier(.16,1,.3,1) both; }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 8vw, 52px);
+    font-weight: 700; line-height: 1.1;
+    margin-bottom: 6px;
+    animation: rise 1s .35s cubic-bezier(.16,1,.3,1) both;
+    background: linear-gradient(135deg, var(--hot) 0%, var(--mauve) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    cursor: pointer;
+  }
+  h1:hover { filter: drop-shadow(0 2px 12px #d6255f66); }
+
+  .name {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(22px, 5vw, 32px);
+    color: var(--mauve); margin-bottom: 28px;
+    animation: rise 1s .4s cubic-bezier(.16,1,.3,1) both;
+  }
+
+  /* ── Divider ── */
+  .divider { display:flex; align-items:center; gap:12px; margin:0 auto 28px; width:80%; animation: rise 1s .45s cubic-bezier(.16,1,.3,1) both; }
+  .divider span { flex:1; height:1px; background:linear-gradient(90deg,transparent,#e8748a80,transparent); }
+  .divider em { font-style:normal; font-size:18px; }
+
+  /* ── Message ── */
+  .message { font-size: 17px; line-height: 1.75; color: #7a3050; font-weight: 300; font-style: italic; margin-bottom: 32px; animation: rise 1s .5s cubic-bezier(.16,1,.3,1) both; }
+
+  /* ── Cake ── */
+  .cake-wrap {
+    display: flex; justify-content: center; margin-bottom: 30px;
+    animation: rise 1s .55s cubic-bezier(.16,1,.3,1) both;
+    cursor: pointer;
+  }
+  .cake-wrap:hover svg { filter: drop-shadow(0 6px 16px #e8748a66); transform: scale(1.06); }
+  svg.cake { width: 90px; height: 90px; transition: transform .3s, filter .3s; }
+
+  @keyframes flicker { 0%,100%{transform:scaleY(1) rotate(-2deg);opacity:1;} 50%{transform:scaleY(.85) rotate(2deg);opacity:.85;} }
+  .flame { animation: flicker .6s ease-in-out infinite; transform-origin: bottom center; }
+
+  /* ── Footer ── */
+  .footer { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--rose); opacity: .7; animation: rise 1s .65s cubic-bezier(.16,1,.3,1) both; }
+
+  /* ── Sparkles ── */
+  .sparkles { position:absolute; inset:0; pointer-events:none; }
+  .sparkle { position:absolute; font-size:14px; animation:twinkle 2s ease-in-out infinite; opacity:0; }
+  @keyframes twinkle { 0%,100%{opacity:0;transform:scale(.6) rotate(0deg);} 50%{opacity:.7;transform:scale(1) rotate(20deg);} }
+
+  /* ── Click confetti particle ── */
+  .confetti-piece {
+    position: fixed;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 9999;
+    animation: confettiFall var(--dur) ease-out forwards;
+  }
+  @keyframes confettiFall {
+    0%   { opacity: 1; transform: translate(0,0) rotate(0deg) scale(1); }
+    100% { opacity: 0; transform: translate(var(--cx), var(--cy)) rotate(var(--cr)) scale(.3); }
+  }
+
+  /* ── Modals ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: #b8547240;
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--cream);
+    border-radius: 16px;
+    padding: 44px 40px 36px;
+    max-width: 380px; width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 80px #d6255f33, 0 0 0 1.5px #e8748a55;
+    transform: scale(.88) translateY(20px);
+    transition: transform .35s cubic-bezier(.16,1,.3,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+  .modal::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--blush), var(--hot), var(--gold), var(--hot), var(--blush));
+    border-radius: 16px 16px 0 0;
+  }
+
+  .modal-icon { font-size: 52px; margin-bottom: 14px; display: block; animation: popIn .5s cubic-bezier(.16,1,.3,1) both; }
+  @keyframes popIn { from{transform:scale(0) rotate(-20deg);} to{transform:scale(1) rotate(0deg);} }
+
+  .modal h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 700;
+    background: linear-gradient(135deg, var(--hot), var(--mauve));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 12px;
+  }
+  .modal p { font-size: 15px; color: #7a3050; line-height: 1.7; font-style: italic; font-weight: 300; margin-bottom: 24px; }
+
+  .modal-close {
+    background: linear-gradient(135deg, var(--rose), var(--hot));
+    color: white;
+    border: none; border-radius: 30px;
+    padding: 11px 32px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px; letter-spacing: .15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 4px 16px #d6255f44;
+  }
+  .modal-close:hover { transform: translateY(-2px); box-shadow: 0 8px 24px #d6255f55; }
+
+  /* heart rain inside modal */
+  .modal-hearts { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+  .mheart { position:absolute; font-size:14px; opacity:0; animation: mfall linear infinite; }
+  @keyframes mfall { 0%{opacity:.7;transform:translateY(-10px);} 100%{opacity:0;transform:translateY(200px);} }
+
+  /* ── Firework canvas ── */
+  #fwCanvas { position:fixed; inset:0; pointer-events:none; z-index:998; }
+
+  /* ── Hint bar ── */
+  .hint {
+    position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+    background: #d6255f22; backdrop-filter: blur(8px);
+    border: 1px solid #e8748a44;
+    border-radius: 30px; padding: 8px 22px;
+    font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--mauve); opacity: .9;
+    animation: rise 1s 1.2s cubic-bezier(.16,1,.3,1) both;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="fwCanvas"></canvas>
+
+<!-- Floating petals -->
+<script>
+  const petalColors = ['#f9c6d0','#e8748a','#d6255f','#fde8ed','#e8c07d','#b85472'];
+  for (let i = 0; i < 22; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.style.cssText = `left:${Math.random()*100}vw;top:${Math.random()*-60}px;background:${petalColors[Math.floor(Math.random()*petalColors.length)]};animation-duration:${4+Math.random()*6}s;animation-delay:${Math.random()*8}s;transform:rotate(${Math.random()*360}deg);width:${8+Math.random()*10}px;height:${12+Math.random()*12}px;`;
+    document.body.appendChild(p);
+  }
+</script>
+
+<!-- Card -->
+<div class="card" id="card">
+  <div class="ribbon"></div>
+
+  <div class="sparkles">
+    <span class="sparkle" style="top:12%;left:8%;animation-delay:.3s">✦</span>
+    <span class="sparkle" style="top:18%;right:10%;animation-delay:1s">✦</span>
+    <span class="sparkle" style="bottom:22%;left:12%;animation-delay:.7s">✦</span>
+    <span class="sparkle" style="bottom:15%;right:8%;animation-delay:1.4s">✦</span>
+    <span class="sparkle" style="top:50%;left:5%;animation-delay:.5s;font-size:10px">✦</span>
+    <span class="sparkle" style="top:45%;right:6%;animation-delay:1.7s;font-size:10px">✦</span>
+  </div>
+
+  <div class="dots">
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    <div class="dot"></div><div class="dot"></div>
+  </div>
+
+  <!-- Clickable Balloons -->
+  <div class="balloons">
+    <div class="balloon" onclick="popBalloon(event,0)"></div>
+    <div class="balloon" onclick="popBalloon(event,1)"></div>
+    <div class="balloon" onclick="popBalloon(event,2)"></div>
+    <div class="balloon" onclick="popBalloon(event,3)"></div>
+  </div>
+
+  <p class="sub">Wishing you a wonderful</p>
+
+  
+  <h1 onclick="openModal('fireworks')">Happy Birthday!</h1>
+  <p class="name">My Dearest, Krisha</p>
+
+  <div class="divider"><span></span><em>🌸</em><span></span></div>
+
+  <div class="cake-wrap" onclick="openModal('wish')">
+    <svg class="cake" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="27" y="28" width="6" height="14" rx="3" fill="#f9c6d0"/>
+      <rect x="42" y="22" width="6" height="18" rx="3" fill="#e8748a"/>
+      <rect x="57" y="28" width="6" height="14" rx="3" fill="#f9c6d0"/>
+      <g class="flame" style="transform-origin:30px 26px">
+        <ellipse cx="30" cy="24" rx="3" ry="5" fill="#e8c07d" opacity=".9"/>
+        <ellipse cx="30" cy="25" rx="1.5" ry="3" fill="#fff" opacity=".6"/>
+      </g>
+      <g class="flame" style="transform-origin:45px 20px;animation-delay:.2s">
+        <ellipse cx="45" cy="18" rx="3.5" ry="5.5" fill="#e8c07d" opacity=".9"/>
+        <ellipse cx="45" cy="19" rx="1.7" ry="3.3" fill="#fff" opacity=".6"/>
+      </g>
+      <g class="flame" style="transform-origin:60px 26px;animation-delay:.4s">
+        <ellipse cx="60" cy="24" rx="3" ry="5" fill="#e8c07d" opacity=".9"/>
+        <ellipse cx="60" cy="25" rx="1.5" ry="3" fill="#fff" opacity=".6"/>
+      </g>
+      <rect x="20" y="42" width="50" height="16" rx="4" fill="#f9c6d0"/>
+      <ellipse cx="45" cy="42" rx="25" ry="5" fill="#fde8ed"/>
+      <path d="M20 46 Q25 52 30 46 Q35 52 40 46 Q45 52 50 46 Q55 52 60 46 Q65 52 70 46 V58 H20Z" fill="white" opacity=".5"/>
+      <rect x="14" y="58" width="62" height="20" rx="4" fill="#e8748a"/>
+      <ellipse cx="45" cy="58" rx="31" ry="6" fill="#f9c6d0"/>
+      <path d="M14 62 Q20 68 26 62 Q32 68 38 62 Q44 68 50 62 Q56 68 62 62 Q68 68 74 62 Q77 68 76 78 H14Z" fill="white" opacity=".35"/>
+      <ellipse cx="45" cy="78" rx="34" ry="5" fill="#fde8ed"/>
+      <circle cx="28" cy="68" r="2.5" fill="white" opacity=".6"/>
+      <circle cx="38" cy="64" r="2" fill="white" opacity=".5"/>
+      <circle cx="52" cy="70" r="2.5" fill="white" opacity=".6"/>
+      <circle cx="62" cy="65" r="2" fill="white" opacity=".5"/>
+    </svg>
+  </div>
+
+  <!-- Clickable message → love note modal -->
+  <p class="message" style="cursor:pointer" onclick="openModal('love')">
+    May your day be filled with<br>
+    joy, laughter, and all the love<br>
+    your heart can hold. 🌷
+  </p>
+
+  <div class="divider"><span></span><em>💖</em><span></span></div>
+
+  <!-- Clickable footer → confetti -->
+  <p class="footer" style="cursor:pointer" onclick="burstConfetti(event)">With love &amp; warm wishes</p>
+</div>
+
+<!-- Hint -->
+<div class="hint">✨ Tap anything on the card!</div>
+
+<!-- ── MODALS ── -->
+
+<!-- Fireworks Modal -->
+<div class="modal-overlay" id="modal-fireworks" onclick="closeModal('fireworks')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hearts" id="mhearts-fireworks"></div>
+    <span class="modal-icon">🎆</span>
+    <h2>It's Your Day!</h2>
+    <p>May every moment sparkle like fireworks in the night sky! 🌟✨</p>
+    <button class="modal-close" onclick="closeModal('fireworks')">Close ✦</button>
+  </div>
+</div>
+
+<!-- Wish / Cake Modal -->
+<div class="modal-overlay" id="modal-wish" onclick="closeModal('wish')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hearts" id="mhearts-wish"></div>
+    <span class="modal-icon">🎂</span>
+    <h2>Make a Wish!</h2>
+    <p>Close your eyes, take a deep breath, and blow out the candles… your wishes have wings today. Dream big, dear one! 🌸</p>
+    <button class="modal-close" onclick="closeModal('wish')">Close ✦</button>
+  </div>
+</div>
+
+<!-- Love Note Modal -->
+<div class="modal-overlay" id="modal-love" onclick="closeModal('love')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hearts" id="mhearts-love"></div>
+    <span class="modal-icon">💌</span>
+    <h2>A Note for You</h2>
+    <p>You are truly one of a kind — your smile lights up every room, and the world is brighter because you're in it. Happy Birthday, beautiful soul! 🌷💖</p>
+    <button class="modal-close" onclick="closeModal('love')">Close ✦</button>
+  </div>
+</div>
+
+<script>
+// ── Modal logic ──
+const balloonMessages = [
+  { icon: '🎈', title: 'Pop!', msg: 'Every balloon you pop is a wish sent to the universe — this one carries all the joy in the world for you! 🌟' },
+  { icon: '💗', title: 'Surprise!', msg: 'Inside this balloon was a tiny piece of confetti shaped like your smile. It is been released into the world! ✨' },
+  { icon: '🌸', title: 'Whoosh!', msg: 'A burst of pink petals just flew out — did you feel that breeze? That was the universe sending you a hug! 🌸' },
+  { icon: '🎉', title: 'Yay!', msg: 'This balloon was filled with pure celebration — and now it is all over you! Happy, happy birthday! 🎉' },
+];
+
+function openModal(type) {
+  const overlay = document.getElementById('modal-' + type);
+  overlay.classList.add('open');
+  launchFireworks();
+  spawnModalHearts('mhearts-' + type);
+}
+
+function closeModal(type) {
+  document.getElementById('modal-' + type).classList.remove('open');
+}
+
+// Balloon-specific popup
+let balloonModal = null;
+function popBalloon(e, idx) {
+  e.stopPropagation();
+  const balloon = e.currentTarget;
+  const rect = balloon.getBoundingClientRect();
+
+  // Burst particles
+  for (let i = 0; i < 10; i++) {
+    const s = document.createElement('div');
+    s.className = 'pop-burst';
+    s.style.left = rect.left + rect.width/2 + 'px';
+    s.style.top  = rect.top  + rect.height/2 + 'px';
+    const angle = (i / 10) * Math.PI * 2;
+    const dist = 40 + Math.random() * 40;
+    const span = document.createElement('span');
+    span.textContent = ['💗','✦','🌸','⭐','💕'][Math.floor(Math.random()*5)];
+    span.style.setProperty('--tx', Math.cos(angle)*dist + 'px');
+    span.style.setProperty('--ty', Math.sin(angle)*dist + 'px');
+    span.style.animationDelay = Math.random()*.1 + 's';
+    s.appendChild(span);
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 900);
+  }
+
+  // Show balloon-specific modal (reuse love overlay with custom content)
+  const data = balloonMessages[idx];
+  // Create a one-off modal
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-hearts" id="bh-${idx}"></div>
+      <span class="modal-icon">${data.icon}</span>
+      <h2>${data.title}</h2>
+      <p>${data.msg}</p>
+      <button class="modal-close">Close ✦</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('.modal-close').onclick = () => { overlay.classList.remove('open'); setTimeout(()=>overlay.remove(),400); };
+  overlay.onclick = (ev) => { if(ev.target===overlay){ overlay.classList.remove('open'); setTimeout(()=>overlay.remove(),400); } };
+  requestAnimationFrame(() => overlay.classList.add('open'));
+  spawnModalHearts(`bh-${idx}`);
+  launchFireworks();
+}
+
+// ── Heart rain inside modal ──
+function spawnModalHearts(containerId) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  c.innerHTML = '';
+  const emojis = ['💗','🌸','✦','💖','🌷'];
+  for (let i = 0; i < 8; i++) {
+    const h = document.createElement('div');
+    h.className = 'mheart';
+    h.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    h.style.cssText = `left:${Math.random()*90}%;animation-duration:${1.5+Math.random()*2}s;animation-delay:${Math.random()*1.5}s;font-size:${10+Math.random()*10}px;`;
+    c.appendChild(h);
+  }
+}
+
+// ── Confetti burst on footer click ──
+function burstConfetti(e) {
+  const colors = ['#f9c6d0','#e8748a','#d6255f','#fde8ed','#e8c07d','#b85472','#ffffff'];
+  for (let i = 0; i < 40; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 80 + Math.random() * 160;
+    el.style.cssText = `
+      left: ${e.clientX}px; top: ${e.clientY}px;
+      background: ${colors[Math.floor(Math.random()*colors.length)]};
+      --cx: ${Math.cos(angle)*dist}px;
+      --cy: ${Math.sin(angle)*dist}px;
+      --cr: ${Math.random()*720 - 360}deg;
+      --dur: ${.6 + Math.random()*.6}s;
+      border-radius: ${Math.random() > .5 ? '50%' : '2px'};
+      width: ${5+Math.random()*8}px;
+      height: ${5+Math.random()*8}px;
+    `;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1400);
+  }
+}
+
+// ── Fireworks canvas ──
+const canvas = document.getElementById('fwCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = innerWidth; canvas.height = innerHeight; });
+
+let particles = [];
+let fwActive = false;
+let fwTimer = null;
+
+function launchFireworks() {
+  fwActive = true;
+  clearTimeout(fwTimer);
+  fwTimer = setTimeout(() => fwActive = false, 2200);
+
+  const fw_colors = ['#f9c6d0','#e8748a','#d6255f','#e8c07d','#b85472','#ffeef4','#ffffff'];
+  for (let b = 0; b < 5; b++) {
+    setTimeout(() => {
+      const x = innerWidth * (.2 + Math.random() * .6);
+      const y = innerHeight * (.1 + Math.random() * .45);
+      const color = fw_colors[Math.floor(Math.random() * fw_colors.length)];
+      for (let i = 0; i < 55; i++) {
+        const angle = (i / 55) * Math.PI * 2;
+        const speed = 2 + Math.random() * 4;
+        particles.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          alpha: 1,
+          color,
+          r: 2 + Math.random() * 2.5,
+        });
+      }
+    }, b * 280);
+  }
+  if (!animating) animate();
+}
+
+let animating = false;
+function animate() {
+  animating = true;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles = particles.filter(p => p.alpha > 0.02);
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.06;
+    p.vx *= 0.97;
+    p.alpha -= 0.017;
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+  if (particles.length > 0) requestAnimationFrame(animate);
+  else animating = false;
+}
+</script>
+
+</body>
+</html>
